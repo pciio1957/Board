@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >	
+<!-- 
+// springweb.a05_mvc.a03_dao.A02_EmpDao
+public interface A02_EmpDao {
+	public ArrayList<Emp> getEmpList();
+ -->
+<mapper namespace="board.dao.BoardDao">
+
+	<resultMap type="board" id="resultBoard">
+		<!-- <collection property="" column=""></collection> -->
+	</resultMap>
+
+	<!--  전체 게시판 불러오기 -->
+	<select id="boardList" resultType="board" parameterType="board">
+		select * 
+		from board
+		where subject like '%'||#{subject}||'%'
+		and writer like '%'||#{writer}||'%'
+		order by no desc
+	</select>
+	
+	<insert id="insertBoard" parameterType="board">
+		INSERT INTO board values(board_seq.nextval, #{refno}, #{subject}, #{content}, #{writer}, 0, sysdate, sysdate)		
+	</insert> 
+	
+	<update id="uploadFile" parameterType="boardfile">
+		insert into boardfile values(board_seq.currval, #{fname}, sysdate, sysdate, '')
+	</update>
+	
+	<select id="getBoardFile" parameterType="int" resultType="boardfile">
+		select * from boardfile 
+		where no=#{no}
+	</select>
+	
+	<select id="getBoard" parameterType="int" resultType="board">
+		select * from board
+		where no=#{no}
+	</select>
+
+	<update id="uptReadCnt" parameterType="int">
+		UPDATE board 
+			SET readcnt = readcnt + 1;
+		WHERE NO = #{no}
+	</update>
+	
+	
+</mapper>	
