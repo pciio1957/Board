@@ -61,26 +61,26 @@
 				<span class="text-center input-group-text">제 목</span>
 			</div>
 			<input name="subject" class="form-control" 
-				value="" placeholder="제목입력하세요" />	
+				value="${board.subject}" placeholder="제목입력하세요" />	
 		</div>  
 		<div class="input-group mb-3">	
 			<div class="input-group-prepend">
 				<span class="input-group-text">작 성 자</span>
 			</div>
 			<input name="writer" class="form-control" 
-				placeholder="작성자입력하세요" />	
+				placeholder="작성자입력하세요"/>	
 			<div class="input-group-prepend">
 				<span class="input-group-text">상위글번호</span>
 			</div>
 			<input name="refno" class="form-control" 
-				placeholder="상위글번호" value="0" readonly/>	
+				placeholder="상위글번호" value="${board.refno}" readonly/>	
 		</div>		
 		<div class="input-group mb-3">
 			<div class="input-group-prepend">
 				<span class="input-group-text text-right">내 용</span>
 			</div>
 			<textarea name="content" rows="10" 
-				class="form-control" 
+				class="form-control" value="${board.content}"
 				placeholder="내용입력하세요" ></textarea>		 
 		</div> 
 		<div class="input-group mb-3">	

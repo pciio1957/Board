@@ -55,8 +55,11 @@
 		});
 		$("#reBtn").click(function(){
 			if(confirm("답글을 달겠습니다!")){
-				$("form").attr("action",
-						"${path}/board.do?method=reply");
+				$("[name=refno]").val($("[name=no]").val());
+				$("[name=subject]").val("RE:" + $("[name=subject]").val());
+				$("[name=content]").val(
+						"\n\n\n\n================<이전 글>=================\n\n" + $("[name=content]").val());
+				$("form").attr("action", "${path}/board.do?method=insertForm");
 				$("form").submit();
 			}
 		});	
