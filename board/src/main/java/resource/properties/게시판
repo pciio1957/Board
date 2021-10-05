@@ -92,12 +92,71 @@
 
 #다운로드 처리
 1. 상세화면에서 등록된 파일 출력
+	1) dao 작성
+		상세로딩 시 첨부파일로 가져올 수 있게 처리 
+		boardfile 
+		dao
+		public String getFileName(int no);
+		mapper 
+		select fname
+		from boardfile 
+		where no=#{no}
+		
+	2) service단에
+		출력한 단위 vo에 fname을 추가하여 
+		해당 no에 연관된 fname을 가져오게 처리한다
+		
+	3) 화면단에서 fname 출력 
+		
 2. 다운로드 View 만들기
+	1) 사용자 정의 viewer 만들기
+	
 3. container에 등록 처리
+	1) <bean id="download" 
+	
 4. 다운로드 controller 선언
+	1)
+	@RequestMapping("download.do")
+	public String download(@RequestMapping("fname") String fname, model d) {
+		d.addAttribute("downloadFile", fname);
+		return "컨테이너에서 선언한 download Viewer";
+	}
+
 5. 상세화면에서 해당 파일 클릭시 다운로드 controller 호출 및 다운로드 처리
+	location.href = "${path}/download.do?fname="+fname;
+
+		
 		
 #계층 sql을 통한 페이징 처리 
+1. 목적
+	1)데이터의 건수가 많아짐에 따라 웹 화면에서 출력할 수 있는 한계가 있기에 
+		페이징 처리를 통해서 데이터를 효과적으로 확인할 수 있게한다.
+	2) 답글달기가 바로 밑에 처리되므로 효과적인 게시판의 내용 확인과 대화형
+		게시판을 만들기 위함이다. 
+		
+2. 기능 처리 프로세스
+	1) 계층형 sql 처리
+		데이터를 특정한 컬럼을 기준으로 계층적으로 데이터를 처리하려는 목적으로
+			오라클에서 지원되고 있다
+		ex) 1레벨 라바 or 할아버지, 2레벨 드론/저글링/하드라 or 큰아버지/아버지/삼촌, 3레벨 러커 or 사촌형/나/누나
+		
+	2) DB처리
+		컬럼구조 : no, refno 글과 상위글 간의 계층적 연관관계를 처리 
+		
+	3) sql의 주요 키워드 
+		start with 컬럼 = 데이터 : 최상위 레벨의 데이터를 조건
+			(계층형 게시판에서 최상위 데이터는 refno가 0임 -> 여기서 답글을 달면 번호가 올라감)
+			ex) 답글형 게시판의 경우 refno=0
+		connect by prior 연관관계컬럼명 = 연관관계컬럼명 
+		order siblings by 컬럼명 asc/desc 
+			정렬처리 : 계층적 데이터처리의 정렬의 순서를 지정
+			
 
 
-
+#페이지처리 
+1. 기능 내용
+	0) 총데이터 건수
+	1) 한번에 보여줄 페이지지정 : 화면 form(3/5/10/30/50/100) -> vo (검색을 위한 vo를 만들어서 처리하는 방식)
+	2) 페이지의 갯수 : 120/10 => 10페이지
+	3) 클릭한 현재 페이지번호 
+	4) -> 현재 페이지의 시작번호, 현재 페이지의 마지막 번호 

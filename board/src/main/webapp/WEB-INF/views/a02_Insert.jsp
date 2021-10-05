@@ -67,8 +67,7 @@
 			<div class="input-group-prepend">
 				<span class="input-group-text">작 성 자</span>
 			</div>
-			<input name="writer" class="form-control" 
-				placeholder="작성자입력하세요"/>	
+			<input name="writer" class="form-control" placeholder="작성자입력하세요"/>	
 			<div class="input-group-prepend">
 				<span class="input-group-text">상위글번호</span>
 			</div>
@@ -80,8 +79,7 @@
 				<span class="input-group-text text-right">내 용</span>
 			</div>
 			<textarea name="content" rows="10" 
-				class="form-control" value="${board.content}"
-				placeholder="내용입력하세요" ></textarea>		 
+				class="form-control" placeholder="내용입력하세요">${board.content}</textarea>		 
 		</div> 
 		<div class="input-group mb-3">	
 			<div class="input-group-prepend">

@@ -63,6 +63,10 @@
 				$("form").submit();
 			}
 		});	
+		
+		$("#fname").click(function(){
+			location.href="${path}/download.do?fname="+$(this).val();
+		});
 	});
 </script>
 </head>
@@ -105,6 +109,10 @@
 		<input name="subject" class="form-control"
 			value="${board.subject}"  
 			placeholder="제목입력하세요" />	
+		<div class="input-group-prepend">
+			<span class="input-group-text">첨부파일</span>
+		</div>
+		<input class="form-control" id="fname" value="${board.fname}"/>	
 		 
 	</div>  	
 	<div class="input-group mb-3">	

@@ -56,6 +56,9 @@
 	 	<property name="contentType" value="text/html; charset=utf-8"/>
 	 </bean>
 	 
+	 <!--  1005 다운로드를 위한 Viewer 클래스 연결  -->
+	 <bean id="downloadViewer" class="board.util.DownloadViewer"></bean>
+	 
 	 <!--  id값의 view를 등록하고 우선순위를 최우선으로 설정하는 부분을 선언하는 객체 -->
 	 <bean id="btnViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
 	 	<property name="order" value="0"/>

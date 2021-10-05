@@ -66,7 +66,10 @@ public class BoardService {
 	public Board getBoard(int no) {
 		// 상세조회시 조회카운트 up 
 		dao.uptReadCnt(no);
-		return dao.getBoard(no);
+		// 기본 내용은 board이지만 파일을 가져올 수 있도록 파일이름 연결
+		Board b = dao.getBoard(no);
+		b.setFname(dao.getBoadFile(no));
+		return b;
 	}	
 	public void update(Board update) {
 		dao.updateBoard(update);

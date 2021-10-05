@@ -6,5 +6,6 @@ name=scott
 pass=tiger
 
 #파일서버
-tmpUpload=C:/javaexp/workspace/.metadata/.plugins/org.eclipse.wst.sse.core/
-upload=C:/javaexp/workspace/board/src/main/webapp/z01_upload/
+tmpUpload=C:/javaexp/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp1/wtpwebapps/board/z01_upload/
+upload=C:/Users/pciio/git/Board/board/src/main/webapp/z01_upload/
+#깃설정으로 바뀜 (깃안했을때 경로) : upload=C:/javaexp/workspace/board/src/main/webapp/z01_upload/

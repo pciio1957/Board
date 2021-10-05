@@ -12,7 +12,9 @@
 		FROM BOARD 
 		WHERE subject LIKE '%'||#{subject}||'%'
 		AND writer LIKE '%'||#{writer}||'%'
-		ORDER BY NO DESC 	
+		START WITH refno = 0
+		CONNECT BY PRIOR NO = refno
+		ORDER siblings BY NO desc
  	</select>
 	 <select id="getBoard" resultType="board" 
  	 	parameterType="int">
@@ -27,7 +29,7 @@
 	</insert> 
 	<insert id="uploadFile" parameterType="boardfile">
 		insert into boardfile values(
-			board_seq.currval, #{fname}, sysdate,sysdate,'' )
+			board_seq.currval, #{fname}, '', '', sysdate)
 	</insert> 		
  	<update id="updateBoard" parameterType="board">
 		UPDATE board
@@ -48,8 +50,8 @@
  	</update>	 
 
 	<select id="getBoadFile" 
-		resultType="boardfile" parameterType="int">
-		select *
+		resultType="String" parameterType="int">
+		select fname
 		from boardfile
 		where no = #{no}
 	</select>	

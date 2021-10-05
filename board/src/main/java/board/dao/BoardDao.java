@@ -14,7 +14,7 @@ public interface BoardDao {
 	
 	
 	public void uploadFile(BoardFile ins);
-	public ArrayList<BoardFile> getBoadFile(int no);
+	public String getBoadFile(int no);
 	public Board getBoard(int no);
 
 	

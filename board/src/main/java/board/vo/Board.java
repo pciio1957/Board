@@ -14,9 +14,10 @@ public class Board {
 	private int readcnt;
 	private Date regdte;
 	private Date uptdte;
+	private String fname;
 	// 첨부 파일을 받을 수 있는 객체
 	private MultipartFile report;
-	
+
 	public int getNo() {
 		return no;
 	}
@@ -71,5 +72,10 @@ public class Board {
 	public void setReport(MultipartFile report) {
 		this.report = report;
 	}
-	
+	public String getFname() {
+		return fname;
+	}
+	public void setFname(String fname) {
+		this.fname = fname;
+	}
 }
