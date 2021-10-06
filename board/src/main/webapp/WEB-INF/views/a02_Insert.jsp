@@ -33,11 +33,16 @@
 		$("#goMain").click(function(){
 			$(location).attr("href","${path}/board.do?method=list");	
 		});
-		$("#regBtn").click(function(){
-			if(confirm("등록하시겠습니까?")){
-				$("#board").submit();
+
+		var isInsert = "${board.subject}";
+		if(isInsert != "") {
+			if(confirm("등록되었습니다! \n 계속 등록하시겠습니까?")) {
+				$(":input").val();
+				$("[name=refno]").val(0);
+			}else {
+				$("#list").submit();
 			}
-		});	
+		}
 		
 		// custom-file-input custom-file-label
 		$(".custom-file-input").on("change", function(){
@@ -54,6 +59,10 @@
 
 </div>
 <div class="container">
+	<form id="list" action="${path}/board.do?method=list" method="post">
+		<!--  등록 후 현재 페이지 번호를 변경 처리 ===> session값에 영향 -->
+		<input type="hidden" name="curPage" value="1">
+	</form>
 	<form id="board" enctype="multipart/form-data" action="${path}/board.do?method=insert" method="post">
 		<input type="hidden" name="no" value="0"/>
 		<div class="input-group mb-3">
@@ -93,10 +102,8 @@
 			</div>
 		</div>	
 		<div class="text-right">
-			<input type="button" class="btn btn-info"
-				value="등록" id="regBtn"/>
-			<input type="button" class="btn btn-success"
-				value="조회 화면으로" id="goMain"/>
+			<button type="file" id="refBtn" class="btn btn-info">등록</button>
+			<button type="button" id="goMain" class="btn btn-success">등록</button>
 		</div>
 	</form>
 </div>

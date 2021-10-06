@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import board.service.BoardService;
 import board.vo.Board;
+import board.vo.BoardSch;
 
 @Controller
 @RequestMapping("board.do") // 공통 url을 선언..
@@ -22,9 +23,11 @@ public class BoardController {
 	// http://localhost:7080/board/board.do?method=list
 	// 각 기능별 메서드를 params="기능요청선언"
 	@RequestMapping(params="method=list")
-	public String boardList(Board board, Model d) { // 모델어트리뷰트로 객체 이름으로 지원
+	public String boardList(BoardSch board, Model d) { // 모델어트리뷰트로 객체 이름으로 지원
 		// service단에 요청값으로 전달해온 데이터을 board를 넣고,
 		// dao에 의해 받은 결과값을 list라는 모델이름으로 사용..
+		
+		// 1006 BoardSch -> boardSch : 화면에 modelAttribute
 		d.addAttribute("list", service.boardList( board ));
 		return "a01_list";
 	}

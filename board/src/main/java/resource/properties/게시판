@@ -160,3 +160,160 @@
 	2) 페이지의 갯수 : 120/10 => 10페이지
 	3) 클릭한 현재 페이지번호 
 	4) -> 현재 페이지의 시작번호, 현재 페이지의 마지막 번호 
+	
+	[DB] 총 데이터 건수 
+	[요청값] 한번에 보여줄 페이지크기 
+	[로직] 총 페이지수 count/pageSize
+	[요청값] 클릭한 현재 페이지번호
+	[로직] 현재 페이지의 시작번호  
+		: curPage, pageSize를 이용해서 도출
+	[로직] 현재 페이지의 마지막 번호
+		: curPage, pageSize 이용해서 도출 
+	
+2. 처리 순서
+	1) 데이터가 순서별로 출력되는 sql 작성
+		rownum : 데이터의 일련번호를 나타낸다
+	2) 위 rownum을 기준으로 페이지의 start, end 번호를 지정하여 특정한 페이지의
+		데이터를 지정할 수 있다
+		rownum between #{start} and #{end}
+		
+		SELECT *
+		FROM (
+			SELECT rownum cnt, b.* 
+			FROM board b
+			WHERE subject LIKE '%'||#{subject}||'%'
+			AND writer LIKE '%'||#{writer}||'%'
+			START WITH refno = 0
+			CONNECT BY PRIOR NO = refno
+			ORDER siblings BY NO DESC)
+		WHERE cnt BETWEEN #{start} AND #{end};
+		
+	3) 리스트 vo에 번호 속성 넣기 
+		: cnt 속성 추가 
+	4) 조회VO(BoardSch)를 통해 요청값과 로직을 통해서 처리할 내용을 선언 확인
+		controller의 요청값을 BoardSch로 선언,
+		-> service, dao, mapper 변경
+		Service단에 기본 속성값 start/end 값 강제 설정 
+		jsp no -> cnt로 출력해서 1단계 화면 내용 확인 
+		-----------------------------------------------------------
+	5) DB(DAO, mapper)를 통해서 나타낼 내용 처리 
+		: [DB] 총 데이터 건수, 전체 sql mapper 확인 처리 
+			- mapper 설정
+				SELECT count(*) 
+				FROM board b
+				WHERE subject LIKE '%'||#{subject}||'%'
+				AND writer LIKE '%'||#{writer}||'%'
+		
+			- dao 설정
+				public int totcnt(BoardSch sch);
+	6) controller의 요청값을 BoardSch로 선언
+	7) service단에서 BoardSch의 로직 처리 
+		: count, pageSize, pageCount, curPage, start, end 
+	8) jsp(뷰)를 통해서 요청값으로 처리할 내용 선언(form)
+		: pageSize, curPage
+		pageCount를 통해서 하단에 페이지 리스트 처리 
+		
+		// 1. 데이터의 총 건수 설정
+		sch.setCount(dao.totCnt(sch));
+		
+		// 2. 페이지크기(요청) : default로 페이지 크기 지정 - 초기화면
+		if(sch.getPageSize() == 0) {
+			sch.setPageSize(5);
+		}
+		
+		// 3. 총 페이지 수
+		//	ex) 데이터 건수가 10건일때는 2페이지
+		//		데이터 건수가 16건일때 3페이지와 남은 1개를 나타내기 위해 4페이지
+		//	sch.getCount()/sch.getPageSize()로 한 다음
+		//	Math.ceil() : 올림처리를 하면 나머지값이 존재하면 올림 처리를 함 
+		//	문제점1: java에서는 정수/정수로 나누면 정수로 출력됨
+		//	원하는 대로 소숫점 처리를 하려면 double로 promote(형변환) 필요
+		//	문제점2 : Math.ceil()의 리턴값은 실수이므로 정수로 casting해야함
+		//int totPage = (int)Math.ceil(sch.getCount()/(double) sch.getPageSize());
+		sch.setPageCount((int)Math.ceil(sch.getCount()/(double) sch.getPageSize()));
+		
+		// 4. 화면에서 클릭한 페이지 번호 (요청값) : 초기화면을 위한 default 설정
+		if(sch.getCurPage() == 0) {
+			sch.setCurPage(1);
+		}
+		
+		// 5. DB를 이용하여 한페이지에 보일 데이터 선언(시작번호/마지막번호 지정)
+		//	sch.getCurPage() : 클릭한 페이지번호
+		//	sch.getPageSize() : 한번에 보여줄 데이터건수
+		//	클릭한 페이지가 1이고 한번에 보여줄 데이터가 5이면 -> 마지막 페이지 번호는 1*5= 5페이지
+		//	클릭한 페이지가 2이고 한번에 보여줄 데이터가 5이면 -> 마지막 페이지 번호는 1*5= 10페이지
+		sch.setStart((sch.getCurPage()-1)*sch.getPageSize()+1);
+		sch.setEnd(sch.getCurPage() * sch.getPageSize());
+		
+		/*
+		
+		마지막번호는 페이지번호와 한페이지에 보이는 데이터 건수를 곱하는 것으로 쉬움
+		시작번호는 마지막번호의 규칙에서 작성해야함 
+		
+		한 페이지당 5건씩 보이는 페이지에서 확인
+		페이지번호		페이지건수 		보일페이지				시작페이지
+		1			5			1  2  3  4  5		(1-1)*5+1
+		2			5			6  7  8  9  10		(2-1)*5+1
+		3 			5			11 12 13 14 15		(3-1)*5+1
+		4			5			16 17 18 19 20		(4-1)*15+1
+		시작페이지의 경우 (페이지번호에서-1) * (페이지 총건수+1) 로 구한다
+
+#하단 페이징 처리 
+0. 페이지 크기 변경 (select로 페이지 크기 변경)
+	페이지 선택을 변경했을 때 현재 페이지 번호를 1로 하고, submit() 처리
+1. 전체 페이징 처리
+	1) 특정 번호 출력 
+		js 함수를 이용해서 curPage를 지정하고, submit 처리 
+		
+		
+2. 페이지 block으로 페이지처리 
+	1) 데이터양이 증가하여 페이지 건수가 늘어날때
+		한번에 나타날 페이지 블럭의 갯수를 지정하여 next나 previous로 이동하면서
+		효과적으로 화면에 데이터를 출력하기 위해 활용된다 
+	2) 처리순서
+		- boardSch vo에 시작 block과 마지막 block 속성 선언, 화면에 출력할 blockSize 선언 
+		- service단 처리 
+			1. blockSize 속성 강제 설정 (5개)
+			2. blocknum 지정 (현재페이지번호/블럭의 크기, 올림 처리하면 아래와 같음)
+				1  2  3  4  5  ->> blocknum 1
+				6  7  8  9  10 ->> blocknum 2
+				11 12 13 14 15 ->> blocknum 3
+			3. 블럭의 마지막 번호 
+				blocknum * blockSize
+			4. 블럭의 시작번호
+				(blocknum-1) * blockSize+1
+				
+		- 화면단 처리 
+			출력한 block의 갯수로 화면에 표시 
+			next/previous를 클릭하면 curPage번호 설정 처리
+			
+			// 블럭 처리 
+			// 1. 블럭 크기 지정
+			sch.setBlockSize(5);
+			
+			// 2. blocknum 지정 : 전체 페이지 번호/블럭 크기
+			int blocknum = (int) (Math.ceil(sch.getCurPage()/(double)sch.getBlockSize()));
+			
+			// 3. 마지막 블럭 번호 
+			//	마지막 블럭번호가 딱 떨어지는 경우가 잘 없음 
+			// 	총 페이지수가 23일때 -> 한번에 보여줄 block의 수가 5로 25가 나오므로 에러 발생
+			// 	그래서 마지막 블럭번호는 총 페이지수를 넘지 못하게 처리해야함
+			int endblock = blocknum * sch.getBlockSize();
+			if(endblock>sch.getPageCount()) {
+				endblock = sch.getPageCount();
+			}
+			sch.setEndBlock(endblock);
+			sch.setStartBlock((blocknum-1) * sch.getBlockSize()+1);
+			
+			
+			
+			-화살표(Next/Previous) 
+			  1  2  3  4  5  >
+			< 6  7  8  9  10 >
+			< 11 12 13
+			
+			 화살표(Next)를 클릭하면 현재 마지막 블럭+1로 해서 curPage를 설정하면 다음 블럭이 출력된다.
+			 화살표(Previous)를 클릭하면 현재 시작 블럭-1로 해서 curPage를 설정하면 이전 블럭이 출력된다
+				
+				
+				

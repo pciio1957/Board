@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 import board.vo.Board;
 import board.vo.BoardFile;
+import board.vo.BoardSch;
 
 // board.dao.BoardDao
 public interface BoardDao {
-	public ArrayList<Board> boardList(Board sch);
+	public ArrayList<Board> boardList(BoardSch sch);
 	public void insertBoard(Board ins);
 	public void updateBoard(Board upt);
 	public void deleteBoard(int no);
@@ -19,4 +20,5 @@ public interface BoardDao {
 
 	
 	public void uptReadCnt(int no);
+	public int totCnt(BoardSch sch);
 }

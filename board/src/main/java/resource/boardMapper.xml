@@ -9,13 +9,24 @@
 	<select id="boardList" resultType="board"
  			parameterType="board">
 		SELECT *
-		FROM BOARD 
+		FROM (
+			SELECT rownum cnt, b.* 
+			FROM board b
+			WHERE subject LIKE '%'||#{subject}||'%'
+			AND writer LIKE '%'||#{writer}||'%'
+			START WITH refno = 0
+			CONNECT BY PRIOR NO = refno
+			ORDER siblings BY NO DESC)
+		WHERE cnt BETWEEN #{start} AND #{end}
+ 	</select>
+ 	
+ 	<select id="totCnt" resultType="int">
+ 		SELECT count(*) 
+		FROM board b
 		WHERE subject LIKE '%'||#{subject}||'%'
 		AND writer LIKE '%'||#{writer}||'%'
-		START WITH refno = 0
-		CONNECT BY PRIOR NO = refno
-		ORDER siblings BY NO desc
  	</select>
+ 	
 	 <select id="getBoard" resultType="board" 
  	 	parameterType="int">
  	 	select *

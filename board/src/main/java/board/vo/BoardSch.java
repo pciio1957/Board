@@ -8,15 +8,17 @@ public class BoardSch {
 	private String writer;
 	
 	// 2. 페이징 처리를 위한 속성
-	private int count; // 총 데이터 건수
-	private int pageSize; // 한번에 보여줄 페이지크기
-	private int pageCount; // 총 페이지수 count/pageSize
-	private int curPage;  // 클릭한 현재 페이지번호
-	private int start; // 현재 페이지의 시작번호 
-	private int end; // 현재 페이지의 마지막 번호 
+	private int count; 		// 총 데이터 건수
+	private int pageSize; 	// 한번에 보여줄 페이지크기
+	private int pageCount; 	// 총 페이지수 count/pageSize
+	private int curPage;	// 클릭한 현재 페이지번호
+	private int start;		// 현재 페이지의 시작번호 
+	private int end;		// 현재 페이지의 마지막 번호 
 	
-	// 3. 블럭 처리 속성
-	// 나중에 만든다고 하심
+	// 3. 블럭 처리 속성 1006 추가
+	private int blockSize; 		// 한번에 보여줄 block의 크기
+	private int startBlock;		// block의 시작번호
+	private int endBlock;		// block의 마지막번호
 	
 	
 	public String getSubject() {
@@ -67,8 +69,23 @@ public class BoardSch {
 	public void setEnd(int end) {
 		this.end = end;
 	}
-	
-	
-	
-	
+	public int getBlockSize() {
+		return blockSize;
+	}
+	public void setBlockSize(int blockSize) {
+		this.blockSize = blockSize;
+	}
+	public int getStartBlock() {
+		return startBlock;
+	}
+	public void setStartBlock(int startBlock) {
+		this.startBlock = startBlock;
+	}
+	public int getEndBlock() {
+		return endBlock;
+	}
+	public void setEndBlock(int endBlock) {
+		this.endBlock = endBlock;
+	}
+
 }
